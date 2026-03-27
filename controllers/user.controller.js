@@ -1,3 +1,5 @@
+const { createUserSchema, updateUserSchema } = require('../validations/user.validation.js');
+
 const {
   getUsers,
   createUser,
@@ -16,14 +18,18 @@ const getUsersController = (req, res) => {  // GET
 };
 
 const createUserController = (req, res) => { // POST
-  if (!req.body.name) {
+  const result = createUserSchema.safeParse(req.body); // Validation
+
+  if (!result.success) {
     return res.status(400).json({
       success: false,
-      message: "Name required"
+      error: result.error.errors
     });
   }
 
-  const newuser = createUser(req.body);
+
+  const newuser = createUser(result.data);
+
   res.status(201).json({
     success: true,
     data: newuser
@@ -47,7 +53,16 @@ const getUserByIdController = (req, res) => { // GET
 }
 
 const updateUserController = (req, res) => { // PUT
-  const user = updateUser(req.params.id, req.body);
+  const result = updateUserSchema.safeParse(req.body); // Validation
+
+  if (!result.success) {
+    res.statusCode(400).json({
+      success: false,
+      error: result.error.errors
+    });
+  }
+
+  const user = updateUser(req.params.id, result.data);
   if (!user) {
     return res.status(404).json({
       success: false,
