@@ -16,12 +16,30 @@ const getUsersController = (req, res) => {  // GET
 };
 
 const createUserController = (req, res) => { // POST
-  createUser(req.body);
-  res.status(201).json({success: true});
+  if (!req.body.name) {
+    return res.status(400).json({
+      success: false,
+      message: "Name required"
+    });
+  }
+
+  const newuser = createUser(req.body);
+  res.status(201).json({
+    success: true,
+    data: newuser
+  });
 };
 
 const getUserByIdController = (req, res) => { // GET
   const user = getUser(req.params.id);
+
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: "User not found"
+    });
+  }
+
   res.status(200).json({
     success: true,
     data: user
@@ -29,16 +47,23 @@ const getUserByIdController = (req, res) => { // GET
 }
 
 const updateUserController = (req, res) => { // PUT
-  updateUser(req.params.id);    // Haven't yet added any way to give what details to update
-                                // Leave it for now
-  res.status(200).json({success: true});
+  const user = updateUser(req.params.id, req.body);
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: "Not found"
+    });
+  }
+  res.status(200).json({success: true, data: user});
 }
 
 const deleteUserController = (req, res) => { // DELETE
-  deleteUser(req.params.id);    // service contain logic, wheather if such users exists
-                                // Although it can be handled using middleware, because
-                                // user has to be logged in
-  res.status(204).json({success: true});
+  const deleted = deleteUser(req.params.id);
+  if (!deleted) {
+    res.status(404).send();
+    return;
+  }
+  res.status(204).send();
 }
 
 module.exports = {
