@@ -43,15 +43,6 @@ const getUserByIdController = (req, res) => { // GET
 }
 
 const updateUserController = (req, res) => { // PUT
-  const result = updateUserSchema.safeParse(req.body); // Validation
-
-  if (!result.success) {
-    return res.status(400).json({
-      success: false,
-      error: result.error.errors
-    });
-  }
-
   const user = updateUser(req.params.id, result.data);
   if (!user) {
     return res.status(404).json({
