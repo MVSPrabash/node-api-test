@@ -1,5 +1,7 @@
-const validate = (schema) => (req, res, next) => {
-  const result = schema.safeParse(req.body);
+const validate = (schema, source = "body") => (req, res, next) => {
+  const data = req[source];
+
+  const result = schema.safeParse(data);
 
   if (!result.success) {
     console.log("Validation Middleware: user details not valid");
