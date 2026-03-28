@@ -18,17 +18,7 @@ const getUsersController = (req, res) => {  // GET
 };
 
 const createUserController = (req, res) => { // POST
-  const result = createUserSchema.safeParse(req.body); // Validation
-
-  if (!result.success) {
-    return res.status(400).json({
-      success: false,
-      error: result.error.errors
-    });
-  }
-
-
-  const newuser = createUser(result.data);
+  const newuser = createUser(req.validatedData);
 
   res.status(201).json({
     success: true,
@@ -56,7 +46,7 @@ const updateUserController = (req, res) => { // PUT
   const result = updateUserSchema.safeParse(req.body); // Validation
 
   if (!result.success) {
-    res.statusCode(400).json({
+    return res.status(400).json({
       success: false,
       error: result.error.errors
     });
