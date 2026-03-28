@@ -1,5 +1,3 @@
-const { createUserSchema, updateUserSchema } = require('../validations/user.validation.js');
-
 const {
   getUsers,
   createUser,
@@ -27,7 +25,7 @@ const createUserController = (req, res) => { // POST
 };
 
 const getUserByIdController = (req, res) => { // GET
-  const user = getUser(req.params.id);
+  const user = getUser(req.validatedData.id);
 
   if (!user) {
     return res.status(404).json({
@@ -43,7 +41,9 @@ const getUserByIdController = (req, res) => { // GET
 }
 
 const updateUserController = (req, res) => { // PUT
-  const user = updateUser(req.params.id, result.data);
+  const id = req.validatedData.id;
+  const updateData = req.validatedData;
+  const user = updateUser(id, updateData);
   if (!user) {
     return res.status(404).json({
       success: false,
@@ -54,7 +54,7 @@ const updateUserController = (req, res) => { // PUT
 }
 
 const deleteUserController = (req, res) => { // DELETE
-  const deleted = deleteUser(req.params.id);
+  const deleted = deleteUser(req.validatedData.id);
   if (!deleted) {
     res.status(404).send();
     return;
