@@ -24,14 +24,13 @@ const createUserController = (req, res) => { // POST
   });
 };
 
-const getUserByIdController = (req, res) => { // GET
+const getUserByIdController = (req, res, next) => { // GET
   const user = getUser(req.validatedData.id);
 
   if (!user) {
-    return res.status(404).json({
-      success: false,
-      message: "User not found"
-    });
+    const err = new Error("User not found");
+    err.status = 404;
+    return next(err);
   }
 
   res.status(200).json({
@@ -40,24 +39,24 @@ const getUserByIdController = (req, res) => { // GET
   });
 }
 
-const updateUserController = (req, res) => { // PUT
+const updateUserController = (req, res, next) => { // PUT
   const id = req.validatedData.id;
   const updateData = req.validatedData;
   const user = updateUser(id, updateData);
   if (!user) {
-    return res.status(404).json({
-      success: false,
-      message: "Not found"
-    });
+    const err = new Error("User not found");
+    err.status = 404;
+    return next(err);
   }
   res.status(200).json({success: true, data: user});
 }
 
-const deleteUserController = (req, res) => { // DELETE
+const deleteUserController = (req, res, next) => { // DELETE
   const deleted = deleteUser(req.validatedData.id);
   if (!deleted) {
-    res.status(404).send();
-    return;
+    const err = new Error("User not found");
+    err.status = 404;
+    return next(err);
   }
   res.status(204).send();
 }
