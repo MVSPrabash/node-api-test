@@ -6,79 +6,60 @@ const {
   deleteUser
 } = require('../services/user.service.js');
 
-const getUsersController = async (req, res, next) => {  // GET
-  try {
-    const users = await getUsers();
-   
-    res.status(200).json({
-      success: true,
-      data: users
-    });
-  } catch (err) {
-    next(err);
-  }
-};
+const { asyncHandler } = require('../utils/asyncHandler.js');
 
-const createUserController = async (req, res, next) => { // POST
-  try {
-    const newuser = await createUser(req.validatedData);
-  
-    res.status(201).json({
-      success: true,
-      data: newuser
-    });
-  } catch (err) {
-    next(err);
-  }
-};
+const getUsersController = asyncHandler(async (req, res) => {  // GET
+  const users = await getUsers();
+  res.status(200).json({
+    success: true,
+    data: users
+  });
+});
 
-const getUserByIdController = async (req, res, next) => { // GET
-  try {
-    const user = await getUser(req.validatedData.id);
-  
-    if (!user) {
-      const err = new Error("User not found");
-      err.status = 404;
-      return next(err);
-    }
-  
-    res.status(200).json({
-      success: true,
-      data: user
-    });
-  } catch (err) {
-    next(err);
-  }
-}
+const createUserController = asyncHandler(async (req, res) => { // POST
+  const newuser = await createUser(req.validatedData);
 
-const updateUserController = async (req, res, next) => { // PUT
-  try {
-    const {id, ...updateData} = req.validatedData;
-    const user = await updateUser(id, updateData);
-    if (!user) {
-      const err = new Error("User not found");
-      err.status = 404;
-      return next(err);
-    }
-    res.status(200).json({success: true, data: user});
-  } catch (err) {
-    next(err);
-  }
-}
+  res.status(201).json({
+    success: true,
+    data: newuser
+  });
+});
 
-const deleteUserController = async (req, res, next) => { // DELETE
-  try {
-    const deleted = await deleteUser(req.validatedData.id);
-    if (!deleted) {
-      const err = new Error("User not found");
-      err.status = 404;
-      return next(err);
-    }
-    res.status(204).send();
-  } catch (err) {
-    next(err);
+const getUserByIdController = asyncHandler(async (req, res) => { // GET
+  const user = await getUser(req.validatedData.id);
+
+  if (!user) {
+    const err = new Error("User not found");
+    err.status = 404;
+    return next(err);
   }
-}
+
+  res.status(200).json({
+    success: true,
+    data: user
+  });
+});
+
+const updateUserController = asyncHandler(async (req, res) => { // PUT
+  const {id, ...updateData} = req.validatedData;
+  const user = await updateUser(id, updateData);
+  if (!user) {
+    const err = new Error("User not found");
+    err.status = 404;
+    return next(err);
+  }
+  res.status(200).json({success: true, data: user});
+});
+
+const deleteUserController = asyncHandler(async (req, res, next) => { // DELETE
+  const deleted = await deleteUser(req.validatedData.id);
+  if (!deleted) {
+    const err = new Error("User not found");
+    err.status = 404;
+    return next(err);
+  }
+  res.status(204).send();
+});
 
 module.exports = {
   getUsersController,
