@@ -13,7 +13,7 @@ const {
 router.get('/', getUsersController);
 
 const { validate } = require('../middleware/validate.middleware.js');
-const { createUserSchema, updateUserSchema, idParamScheme } = require('../validations/user.validation.js');
+const { createUserSchema, updateUserSchema, idParamScheme } = require('../schemas/user.schema.js');
 
 // CRUD operation for users
 router.post('/', validate(createUserSchema), createUserController);
