@@ -1,7 +1,7 @@
 const { z } = require('zod');
 
 const idParamScheme = z.object({
-  id: z.string().regex(/^\d+$/, "ID must be a number")
+  id: z.string().regex(/^[0-9a-fA-F]{24}$/)
 });
 
 const createUserSchema = z.object({

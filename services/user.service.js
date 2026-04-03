@@ -1,46 +1,28 @@
-const { users } = require('../models/user.model.js');
+const { User } = require('../models/user.model.js');
 
-let nextId = 1;
-
-const getUsers = () => {
-  console.log("ADMIN: Serving data of all the users");
-  return users;
+const getUsers = async () => {
+  return await User.find();
 };
 
-const createUser = (data) => {
-  const newUser = {
-    id: nextId++,
-    ...data
-  };
-  users.push(newUser);
-  console.log("New User created: ", newUser);
-  return newUser;
+const createUser = async (data) => {
+  const user = new User(data);
+  return await user.save();
 };
 
-const getUser = (uid) => {
-  const id = Number(uid);
-  console.log('Serving User details of uid:' + id);
-  return users.find(u => u.id === id);
+const getUser = async (id) => {
+  return await User.findById(id);
 };
 
-const updateUser = (uid, updateData) => {
-  const id = Number(uid);
-  const user = users.find(u => u.id === id);
-  if (user) {
-    Object.assign(user, updateData)
-    console.log("Updated userinfo: ", user);
-  }
-  return user;
+const updateUser = async (id, data) => {
+  return await User.findByIdAndUpdate(id, data, {
+    returnDocument: 'after',
+    runValidators: true
+  });
 };
 
-const deleteUser = (uid) => {
-  const id = Number(uid);
-  const idx = users.findIndex(u => u.id === id);
-  if (idx === -1) return false;
-
-  console.log("user deleted: ", users[idx]);
-  users.splice(idx, 1);
-  return true;
+const deleteUser = async (id) => {
+  const result = await User.findByIdAndDelete(id);
+  return !!result;
 };
 
 module.exports = {

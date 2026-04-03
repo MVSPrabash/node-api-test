@@ -1,4 +1,13 @@
-// User database
-const users = []
+const mongoose = require('mongoose');
 
-module.exports = { users };
+const userSchema = mongoose.Schema({
+  name: {
+    type: String,
+    require: true
+  }
+});
+
+const User = mongoose.model("User", userSchema);
+
+module.exports = { User };
+

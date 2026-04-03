@@ -13,5 +13,8 @@ app.use("/api/users", userRoutes);
 const { errorHandler } = require('./middleware/error.middleware.js');
 app.use(errorHandler);
 
+const { connectDB } = require('./config/db.js');
+connectDB();
+
 app.listen(process.env.PORT, () => console.log(`Server running at http://localhost:${process.env.PORT}`));
 
