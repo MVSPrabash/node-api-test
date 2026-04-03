@@ -13,6 +13,5 @@ app.use("/api/users", userRoutes);
 const { errorHandler } = require('./middleware/error.middleware.js');
 app.use(errorHandler);
 
-const PORT = 8080;
-app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
+app.listen(process.env.PORT, () => console.log(`Server running at http://localhost:${process.env.PORT}`));
 
