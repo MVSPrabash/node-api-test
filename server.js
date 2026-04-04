@@ -7,8 +7,12 @@ const { logger } = require('./middleware/logger.middleware.js');
 
 app.use(express.json());
 app.use(logger);
+
 const userRoutes = require('./routes/user.routes.js');
 app.use("/api/users", userRoutes);
+
+const authRoutes = require('./routes/auth.routes.js');
+app.use("/api/auth", authRoutes);
 
 const { errorHandler } = require('./middleware/error.middleware.js');
 app.use(errorHandler);
