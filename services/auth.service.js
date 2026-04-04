@@ -28,7 +28,7 @@ const loginUser = async (data) => {
   if (!isMatch) return null;
 
   const token = jwt.sign(
-    { id: user._id },
+    { id: user._id, role: user.role },
     process.env.SECRETKEY,
     { expiresIn: "1h" }
   );
