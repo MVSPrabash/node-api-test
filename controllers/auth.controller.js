@@ -11,7 +11,6 @@ const registerController = asyncHandler(async (req, res) => {
 });
 
 const loginController = asyncHandler(async (req, res) => {
-  console.log("Login Controller: ", req.validatedData);
   const result = await loginUser(req.validatedData);
 
   if (!result) {

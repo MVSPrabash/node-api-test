@@ -9,6 +9,9 @@ const {
     deleteUserController
 } = require('../controllers/user.controller.js');
 
+const { protect } = require('../middleware/auth.middleware.js');
+router.use(protect);
+
 // Get all users, admin only
 router.get('/', getUsersController);
 
