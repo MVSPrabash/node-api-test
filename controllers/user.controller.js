@@ -78,10 +78,44 @@ const deleteUserController = asyncHandler(async (req, res, next) => { // DELETE
   res.status(204).send();
 });
 
+const getMeController = asyncHandler(async (req, res) => {
+  const id = req.user.id;
+  const user = await getUser(id);
+
+  if (!user) {
+    const err = new Error("User not found");
+    err.status = 404;
+    throw err;
+  }
+
+  res.status(202).json({
+    success: true,
+    data: user
+  });
+});
+
+const updateMeController = asyncHandler(async (req, res) => {
+  const id = req.user.id;
+  const user = await updateUser(id, req.validatedData);
+
+  if (!user) {
+    const err = new Error("User not found");
+    err.status = 404;
+    throw err;
+  }
+
+  res.status(202).json({
+    success: true,
+    data: user
+  });
+});
+
 module.exports = {
   getUsersController,
   createUserController,
   getUserByIdController,
   updateUserController,
-  deleteUserController
+  deleteUserController,
+  getMeController,
+  updateMeController,
 };
