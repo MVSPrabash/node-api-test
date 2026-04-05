@@ -11,9 +11,9 @@
 7. Authentication (JWT), Authorization (RBAC)
 8. Ownership Control
 9. /me endpoint
+10. Query system (pagination, filter, search)
 
-### Next (Query Layer)
-1. Query system (pagination, filter, search)
-2. Error system (custom errors)
-3. Auth improvements (password + refresh token)
-4. Testing
+### Next (Custom Error Class)
+- Error system (custom errors)
+- Auth improvements (password + refresh token)
+- Testing
