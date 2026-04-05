@@ -26,6 +26,15 @@ const createUserController = asyncHandler(async (req, res) => { // POST
 });
 
 const getUserByIdController = asyncHandler(async (req, res) => { // GET
+  const requestedId = req.validatedData.id;
+  const currentUserId = req.user.id;
+
+  if (req.user.role !== 'admin' && requestedId !== currentUserId) {
+    const err = new Error("Not Authorized to modify this user");
+    err.status = 403;
+    throw err;
+  }
+
   const user = await getUser(req.validatedData.id);
 
   if (!user) {
@@ -42,6 +51,14 @@ const getUserByIdController = asyncHandler(async (req, res) => { // GET
 
 const updateUserController = asyncHandler(async (req, res) => { // PUT
   const {id, ...updateData} = req.validatedData;
+  const currentUserId = req.user.id;
+
+  if (req.user.role !== 'admin' && currentUserId !== id) {
+    const err = new Error("Not Authorized to update this user");
+    err.status = 403;
+    throw err;
+  }
+
   const user = await updateUser(id, updateData);
   if (!user) {
     const err = new Error("User not found");

@@ -3,13 +3,14 @@ const { User } = require('../models/user.model.js');
 const jwt = require('jsonwebtoken');
 
 const registerUser = async (data) => {
-  const { name, email, password } = data;
+  const { name, email, age, password } = data;
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = new User({
     name,
     email,
+    age,
     password: hashedPassword
   });
 
