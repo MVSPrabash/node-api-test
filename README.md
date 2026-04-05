@@ -13,5 +13,7 @@
 9. /me endpoint
 
 ### Next (Query Layer)
-- Pagination & Filtering
-- Sorting & Searching
+1. Query system (pagination, filter, search)
+2. Error system (custom errors)
+3. Auth improvements (password + refresh token)
+4. Testing
