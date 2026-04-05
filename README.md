@@ -2,8 +2,16 @@
 
 
 ### Concepts
-1. CRUD Operations
-2. Data Pipeline [Router > Validation > Controller > Service > Model (DB)]
+1. REST API (CRUD)
+2. Layered Architecture [Router > Validation > Controller > Service > Model (DB)]
 3. Middleware (Logger, Validation (zod), Error)
-4. MongoDB Integration
-5. Authentication, Authorization
+4. MongoDB + Mongoose Integration
+5. Validation (Zod)
+6. Error Handling
+7. Authentication (JWT), Authorization (RBAC)
+8. Ownership Control
+9. /me endpoint
+
+### Next (Query Layer)
+- Pagination & Filtering
+- Sorting & Searching
