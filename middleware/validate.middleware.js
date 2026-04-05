@@ -11,10 +11,11 @@ const validate = (schema, source = "body") => (req, res, next) => {
     });
   }
 
-  req.validatedData = {
-    ...req.validatedData,
-    ...result.data
-  };
+  if (!req.validated) {
+    req.validated = {};
+  }
+
+  req.validated[source] = result.data;
 
   next();
 };

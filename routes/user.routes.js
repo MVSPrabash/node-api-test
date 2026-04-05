@@ -24,7 +24,7 @@ const {
 router.use(protect);
 
 // Admin routes
-router.get('/', validate(paginationSchema, "query"), authorize("admin"), getUsersController);
+router.get('/', authorize("admin"), validate(paginationSchema, "query"), getUsersController);
 router.post('/', authorize("admin"), validate(createUserSchema), createUserController);
 router.delete('/:id', authorize("admin"), validate(idParamScheme, "params"), deleteUserController);
 

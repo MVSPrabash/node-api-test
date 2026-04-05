@@ -9,7 +9,7 @@ const {
 const { asyncHandler } = require('../utils/asyncHandler.js');
 
 const getUsersController = asyncHandler(async (req, res) => {  // GET
-  let { page = 1, limit = 10, sort, search } = req.query;
+  let { page = 1, limit = 10, sort, search } = req.validated.query;
 
   page = Number(page);
   limit = Number(limit);
@@ -28,7 +28,7 @@ const getUsersController = asyncHandler(async (req, res) => {  // GET
 });
 
 const createUserController = asyncHandler(async (req, res) => { // POST
-  const newuser = await createUser(req.validatedData);
+  const newuser = await createUser(req.validated.body);
 
   res.status(201).json({
     success: true,
@@ -37,7 +37,7 @@ const createUserController = asyncHandler(async (req, res) => { // POST
 });
 
 const getUserByIdController = asyncHandler(async (req, res) => { // GET
-  const requestedId = req.validatedData.id;
+  const requestedId = req.validated.params.id;
   const currentUserId = req.user.id;
 
   if (req.user.role !== 'admin' && requestedId !== currentUserId) {
@@ -46,7 +46,7 @@ const getUserByIdController = asyncHandler(async (req, res) => { // GET
     throw err;
   }
 
-  const user = await getUser(req.validatedData.id);
+  const user = await getUser(requestedId);
 
   if (!user) {
     const err = new Error("User not found");
@@ -61,7 +61,8 @@ const getUserByIdController = asyncHandler(async (req, res) => { // GET
 });
 
 const updateUserController = asyncHandler(async (req, res) => { // PUT
-  const {id, ...updateData} = req.validatedData;
+  const id = req.validated.params.id;
+  const updateData = req.validated.body;
   const currentUserId = req.user.id;
 
   if (req.user.role !== 'admin' && currentUserId !== id) {
@@ -80,7 +81,7 @@ const updateUserController = asyncHandler(async (req, res) => { // PUT
 });
 
 const deleteUserController = asyncHandler(async (req, res, next) => { // DELETE
-  const deleted = await deleteUser(req.validatedData.id);
+  const deleted = await deleteUser(req.validated.params.id);
   if (!deleted) {
     const err = new Error("User not found");
     err.status = 404;
@@ -107,7 +108,7 @@ const getMeController = asyncHandler(async (req, res) => {
 
 const updateMeController = asyncHandler(async (req, res) => {
   const id = req.user.id;
-  const user = await updateUser(id, req.validatedData);
+  const user = await updateUser(id, req.validated.body);
 
   if (!user) {
     const err = new Error("User not found");
