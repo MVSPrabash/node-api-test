@@ -9,10 +9,21 @@ const {
 const { asyncHandler } = require('../utils/asyncHandler.js');
 
 const getUsersController = asyncHandler(async (req, res) => {  // GET
-  const users = await getUsers();
+  let { page = 1, limit = 10, sort, search } = req.query;
+
+  page = Number(page);
+  limit = Number(limit);
+
+  const result = await getUsers({ page, limit, sort, search });
   res.status(200).json({
     success: true,
-    data: users
+    data: result.users,
+    meta: {
+      page: result.page,
+      limit: result.limit,
+      total: result.total,
+      pages: Math.ceil(result.total / result.limit)
+    }
   });
 });
 

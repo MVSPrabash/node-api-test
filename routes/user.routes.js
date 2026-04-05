@@ -3,7 +3,13 @@ const router = express.Router();
 
 const { protect, authorize } = require('../middleware/auth.middleware.js');
 const { validate } = require('../middleware/validate.middleware.js');
-const { createUserSchema, updateUserSchema, idParamScheme } = require('../schemas/user.schema.js');
+const {
+  createUserSchema,
+  updateUserSchema,
+  idParamScheme,
+} = require('../schemas/user.schema.js');
+
+const { paginationSchema } = require('../schemas/query.schema.js');
 
 const {
   getUsersController,
@@ -18,7 +24,7 @@ const {
 router.use(protect);
 
 // Admin routes
-router.get('/', authorize("admin"), getUsersController);
+router.get('/', validate(paginationSchema, "query"), authorize("admin"), getUsersController);
 router.post('/', authorize("admin"), validate(createUserSchema), createUserController);
 router.delete('/:id', authorize("admin"), validate(idParamScheme, "params"), deleteUserController);
 

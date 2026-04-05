@@ -1,7 +1,29 @@
 const { User } = require('../models/user.model.js');
 
-const getUsers = async () => {
-  return await User.find();
+const getUsers = async ({ page, limit, sort, search }) => {
+  const skip = (page - 1) * limit;
+
+  let filter = {};
+
+  if (search) {
+    filter.name = { $regex: search, $options: 'i' };
+  }
+
+  let query = User.find(filter);
+  
+  if (sort) {
+    query = query.sort(sort);
+  }
+
+  const users = await query.skip(skip).limit(limit);
+  const total = await User.countDocuments(filter);
+
+  return {
+    users,
+    total,
+    page,
+    limit
+  };
 };
 
 const createUser = async (data) => {
