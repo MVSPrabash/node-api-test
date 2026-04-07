@@ -12,8 +12,9 @@
 8. Ownership Control
 9. /me endpoint
 10. Query system (pagination, filter, search)
+11. Error System (custom errors)
 
-### Next (Custom Error Class)
-- Error system (custom errors)
+### Next (Filtering - Query)
+- Advanced Filtering
 - Auth improvements (password + refresh token)
 - Testing
