@@ -1,5 +1,6 @@
 const { registerUser, loginUser } = require('../services/auth.service.js');
 const { asyncHandler } = require('../utils/asyncHandler.js');
+const { UnauthorizedError } = require('../utils/errors.js');
 
 const registerController = asyncHandler(async (req, res) => {
   const user = await registerUser(req.validated.body);
@@ -14,9 +15,7 @@ const loginController = asyncHandler(async (req, res) => {
   const result = await loginUser(req.validated.body);
 
   if (!result) {
-    const err = new Error("invalid credentials");
-    err.status = 401;
-    throw err;
+    throw new UnauthorizedError("Invalid credentials");
   }
 
   res.status(200).json({
