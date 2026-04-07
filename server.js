@@ -3,6 +3,8 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 
+app.set('query parser', 'extended');
+
 const { logger } = require('./middleware/logger.middleware.js');
 
 app.use(express.json());

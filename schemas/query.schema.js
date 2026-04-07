@@ -20,8 +20,9 @@ const paginationSchema = z.object({
     }, {
       message: "Invalid sort field"
     }),
-  search: z.string().optional()
-});
+  search: z.string().optional(),
+  fields: z.string().optional()
+}).passthrough();
 
 module.exports = { paginationSchema }
 

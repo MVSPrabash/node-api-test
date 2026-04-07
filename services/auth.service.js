@@ -20,7 +20,7 @@ const registerUser = async (data) => {
 const loginUser = async (data) => {
   const { email, password } = data;
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).select("+password");
 
   if (!user) return null;
 

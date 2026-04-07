@@ -1,29 +1,44 @@
 const { User } = require('../models/user.model.js');
 
-const getUsers = async ({ page, limit, sort, search }) => {
+const allowedFilters = ["age", "isActive", "name"];
+
+const getUsers = async ({ page, limit, sort, search, fields, filters }) => {
   const skip = (page - 1) * limit;
 
-  let filter = {};
+  let queryObj = {};
 
   if (search) {
-    filter.name = { $regex: search, $options: 'i' };
+    queryObj.name = { $regex: search, $options: "i" };
   }
 
-  let query = User.find(filter);
-  
+  if (filters) {
+    filters = Object.keys(filters)
+      .filter(key => allowedFilters.includes(key))
+      .reduce((obj, key) => {
+        obj[key] = filters[key];
+        return obj;
+      }, {});
+
+    Object.assign(queryObj, filters);
+  }
+
+  let query = User.find(queryObj);
+
   if (sort) {
     query = query.sort(sort);
   }
 
-  const users = await query.skip(skip).limit(limit);
-  const total = await User.countDocuments(filter);
+  const allowedFields = ["name", "age", "email", "isActive"];
+  if (fields) {
+    const selected = fields.split(",").filter(f => allowedFields.includes(f));
+    const projection = selected.join(" ");
+    query = query.select(projection);
+  }
 
-  return {
-    users,
-    total,
-    page,
-    limit
-  };
+  const users = await query.skip(skip).limit(limit);
+  const total = await User.countDocuments(queryObj);
+
+  return { users, total, page, limit };
 };
 
 const createUser = async (data) => {

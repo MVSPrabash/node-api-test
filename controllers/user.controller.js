@@ -11,12 +11,50 @@ const { asyncHandler } = require('../utils/asyncHandler.js');
 const { UnauthorizedError, NotFoundError } = require('../utils/errors.js');
 
 const getUsersController = asyncHandler(async (req, res) => {  // GET
-  let { page = 1, limit = 10, sort, search } = req.validated.query;
+  const {
+    page = 1,
+    limit = 10,
+    sort,
+    search,
+    fields,
+    ...rawFilters
+  } = req.validated.query;
 
-  page = Number(page);
-  limit = Number(limit);
+  let filters = { ...rawFilters };  // Clone filters
 
-  const result = await getUsers({ page, limit, sort, search });
+  let filterStr = JSON.stringify(filters);  // Convert operators to Mongo Style
+
+  filterStr = filterStr.replace(
+    /\b(gt|gte|lt|lte)\b/g,
+    (match) => `$${match}`
+  );
+
+  filters = JSON.parse(filterStr);
+
+  // type coersion
+  const coerceType = (obj) => {
+    for (let key in obj) {
+      if (typeof obj[key] === 'object') {
+        coerceType(obj[key]);
+      } else {
+        if (obj[key] === "true") obj[key] = true;
+        else if (obj[key] === "false") obj[key] = false;
+        else if (!isNaN(obj[key])) obj[key] = Number(obj[key]);
+      }
+    }
+  }
+
+  coerceType(filters);
+
+  const result = await getUsers({
+    page,
+    limit,
+    sort,
+    search,
+    fields,
+    filters
+  });
+
   res.status(200).json({
     success: true,
     data: result.users,
