@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const { User } = require('../models/user.model.js');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const { sendEmail } = require("../utils/email.js");
 
 const registerUser = async (data) => {
   const { name, email, age, password } = data;
@@ -43,10 +44,8 @@ const forgotPassword = async (email) => {
 
   if (!user) return null;
 
-  // generate token
   const resetToken = crypto.randomBytes(32).toString("hex");
 
-  // hash the token
   const hashedToken = crypto
     .createHash("sha256")
     .update(resetToken)
@@ -57,7 +56,20 @@ const forgotPassword = async (email) => {
 
   await user.save();
 
-  return resetToken;  /// TODO: Send via email
+  const resetURL = `${process.env.CLIENT_URL}/api/auth/reset-password?token=${resetToken}`;
+
+  await sendEmail({
+    to: user.email,
+    subject: "Password Reset Request",
+    html: `
+      <h2>Password Reset</h2>
+      <p>Click below to reset your password</p>
+      <a href="${resetURL}">${resetURL}</a>
+      <p>This link expires in 10 minutes.</p>
+    `
+  });
+
+  return true;
 }
 
 const resetPassword = async (token, newPassword) => {

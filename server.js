@@ -8,6 +8,7 @@ app.set('query parser', 'extended');
 const { logger } = require('./middleware/logger.middleware.js');
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(logger);
 
 const userRoutes = require('./routes/user.routes.js');

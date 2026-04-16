@@ -31,35 +31,34 @@ const loginController = asyncHandler(async (req, res) => {
 });
 
 const forgotPasswordController = asyncHandler(async (req, res) => {
-    const { email } = req.validated.body;
+  const { email } = req.validated.body;
 
-    const token = await forgotPassword(email);
+  const token = await forgotPassword(email);
 
-    if (!token) {
-        throw new ApiError(404, "User Not Found");
-    }
+  if (!token) {
+    throw new ApiError(404, "User Not Found");
+  }
 
-    /// TODO: send the token via email
-    res.status(200).json({
-        success: true,
-        message: "Reset token generated",
-        token
-    });
+  /// TODO: send the token via email
+  res.status(200).json({
+    success: true,
+    message: "Password reset link sent to email",
+  });
 });
 
 const resetPasswordController = asyncHandler(async (req, res) => {
-    const { token, password } = req.validated.body;
+  const { token, password } = req.validated.body;
 
-    const user = await resetPassword(token, password);
+  const user = await resetPassword(token, password);
 
-    if (!user) {
-        throw new ApiError(400, "Invalid or expired Token");
-    }
+  if (!user) {
+    throw new ApiError(400, "Invalid or expired Token");
+  }
 
-    res.status(200).json({
-        success: true,
-        message: "Password updated successfully"
-    });
+  res.status(200).json({
+    success: true,
+    message: "Password updated successfully"
+  });
 });
 
 module.exports = {
