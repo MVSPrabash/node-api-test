@@ -14,6 +14,6 @@
 10. Query system (pagination, filter, search)
 11. Error System (custom errors)
 
-### Next (password reset)
+### Next (refresh tokens)
 - Auth improvements (password reset, password + refresh token)
 - Testing
