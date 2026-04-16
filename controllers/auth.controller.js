@@ -1,4 +1,10 @@
-const { registerUser, loginUser } = require('../services/auth.service.js');
+const {
+    registerUser,
+    loginUser,
+    forgotPassword,
+    resetPassword
+} = require('../services/auth.service.js');
+const { ApiError } = require('../utils/ApiError.js');
 const { asyncHandler } = require('../utils/asyncHandler.js');
 const { UnauthorizedError } = require('../utils/errors.js');
 
@@ -24,8 +30,42 @@ const loginController = asyncHandler(async (req, res) => {
   });
 });
 
+const forgotPasswordController = asyncHandler(async (req, res) => {
+    const { email } = req.validated.body;
+
+    const token = await forgotPassword(email);
+
+    if (!token) {
+        throw new ApiError(404, "User Not Found");
+    }
+
+    /// TODO: send the token via email
+    res.status(200).json({
+        success: true,
+        message: "Reset token generated",
+        token
+    });
+});
+
+const resetPasswordController = asyncHandler(async (req, res) => {
+    const { token, password } = req.validated.body;
+
+    const user = await resetPassword(token, password);
+
+    if (!user) {
+        throw new ApiError(400, "Invalid or expired Token");
+    }
+
+    res.status(200).json({
+        success: true,
+        message: "Password updated successfully"
+    });
+});
+
 module.exports = {
   registerController,
-  loginController
+  loginController,
+  forgotPasswordController,
+  resetPasswordController
 };
 
