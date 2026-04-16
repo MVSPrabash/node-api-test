@@ -18,15 +18,15 @@ router.post(
 );
 
 router.post(
-    '/forgot-password',
-    validate(forgotPasswordSchema),
-    forgotPasswordController
+  '/forgot-password',
+  validate(forgotPasswordSchema),
+  forgotPasswordController
 );
 
 router.post(
-    '/reset-password',
-    validate(resetPasswordSchema),
-    resetPasswordController
+  '/reset-password',
+  validate(resetPasswordSchema),
+  resetPasswordController
 );
 
 module.exports = router;

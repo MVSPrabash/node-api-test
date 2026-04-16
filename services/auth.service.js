@@ -39,49 +39,49 @@ const loginUser = async (data) => {
 };
 
 const forgotPassword = async (email) => {
-    const user = await User.findOne({ email });
+  const user = await User.findOne({ email });
 
-    if (!user) return null;
+  if (!user) return null;
 
-    // generate token
-    const resetToken = crypto.randomBytes(32).toString("hex");
+  // generate token
+  const resetToken = crypto.randomBytes(32).toString("hex");
 
-    // hash the token
-    const hashedToken = crypto
-        .createHash("sha256")
-        .update(resetToken)
-        .digest("hex");
+  // hash the token
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
     
-    user.resetPasswordToken = hashedToken;
-    user.resetPasswordExpires = Date.now() + 10 * 60 * 1000;
+  user.resetPasswordToken = hashedToken;
+  user.resetPasswordExpires = Date.now() + 10 * 60 * 1000;
 
-    await user.save();
+  await user.save();
 
-    return resetToken;  /// TODO: Send via email
+  return resetToken;  /// TODO: Send via email
 }
 
 const resetPassword = async (token, newPassword) => {
-    const hashedToken = crypto
-        .createHash("sha256")
-        .update(token)
-        .digest("hex")
-    ;
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex")
+  ;
 
-    const user = await User.findOne({
-        resetPasswordToken: hashedToken,
-        resetPasswordExpires: { $gt: Date.now() }
-    }).select("+password");
+  const user = await User.findOne({
+    resetPasswordToken: hashedToken,
+    resetPasswordExpires: { $gt: Date.now() }
+  }).select("+password");
 
-    if (!user) return null;
+  if (!user) return null;
 
-    user.password = await bcrypt.hash(newPassword, 10);
+  user.password = await bcrypt.hash(newPassword, 10);
 
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpires = undefined;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpires = undefined;
 
-    await user.save();
+  await user.save();
 
-    return user;
+  return user;
 };
 
 module.exports = {
