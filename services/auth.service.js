@@ -3,6 +3,7 @@ const { User } = require('../models/user.model.js');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { sendEmail } = require("../utils/email.js");
+const { generateAccessToken, generateRefreshToken } = require('../utils/token.js');
 
 const registerUser = async (data) => {
   const { name, email, age, password } = data;
@@ -30,13 +31,40 @@ const loginUser = async (data) => {
 
   if (!isMatch) return null;
 
-  const token = jwt.sign(
-    { id: user._id, role: user.role },
-    process.env.SECRETKEY,
-    { expiresIn: "1h" }
-  );
+  const accessToken = generateAccessToken(user);
+  const refreshToken = generateRefreshToken(user);
 
-  return { user, token };
+  user.refreshToken = refreshToken;
+  await user.save();
+
+  return { accessToken, refreshToken };
+};
+
+const refreshAccessToken = async (refreshToken) => {
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRETKEY);
+
+    const user = await User.findById(decoded.id);
+
+    if (!user || user.refreshToken !== refreshToken) {
+      return null;
+    }
+
+    const accessToken = generateAccessToken(user);
+
+    return accessToken;
+  } catch (err) {
+    return null;
+  }
+};
+
+const logoutUser = async (userId) => {
+  const user = await User.findById(userId);
+
+  if (!user) return null;
+
+  user.refreshToken = null;
+  await user.save();
 };
 
 const forgotPassword = async (email) => {
@@ -99,6 +127,8 @@ const resetPassword = async (token, newPassword) => {
 module.exports = {
   registerUser,
   loginUser,
+  refreshAccessToken,
+  logoutUser,
   forgotPassword,
   resetPassword
 };

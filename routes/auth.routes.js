@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { registerController, loginController, forgotPasswordController, resetPasswordController } = require('../controllers/auth.controller.js');
+const { registerController, loginController, forgotPasswordController, resetPasswordController, refreshController, logoutController } = require('../controllers/auth.controller.js');
 const { validate } = require('../middleware/validate.middleware.js');
 const { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema } = require('../schemas/auth.schema.js');
 
@@ -16,6 +16,16 @@ router.post(
   validate(loginSchema),
   loginController
 );
+
+router.post(
+  '/refresh',
+  refreshController
+);
+
+router.post(
+  '/logout',
+  logoutController
+);  
 
 router.post(
   '/forgot-password',

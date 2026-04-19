@@ -36,6 +36,10 @@ const userSchema = mongoose.Schema({
     default: true
   },
 
+  refreshToken: {
+    type: String
+  },
+
   resetPasswordToken: {
     type: String
   },

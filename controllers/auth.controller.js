@@ -2,7 +2,9 @@ const {
     registerUser,
     loginUser,
     forgotPassword,
-    resetPassword
+    logoutUser,
+    resetPassword,
+    refreshAccessToken,
 } = require('../services/auth.service.js');
 const { ApiError } = require('../utils/ApiError.js');
 const { asyncHandler } = require('../utils/asyncHandler.js');
@@ -26,7 +28,32 @@ const loginController = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     success: true,
-    token: result.token
+    accessToken: result.accessToken,
+    refreshToken: result.refreshToken
+  });
+});
+
+const refreshController = asyncHandler(async (req, res) => {
+  const { refreshToken } = req.body;
+
+  const accessToken = await refreshAccessToken(refreshToken);
+
+  if (!accessToken) {
+    throw new ApiError(401, "Invalid Refresh token");
+  }
+
+  res.status(200).json({
+    success: true,
+    accessToken
+  });
+});
+
+const logoutController = asyncHandler(async (req, res) => {
+  await logoutUser(req.user.id);
+
+  res.status(200).json({
+    success: true,
+    message: "Logged out successfully"
   });
 });
 
@@ -64,6 +91,8 @@ const resetPasswordController = asyncHandler(async (req, res) => {
 module.exports = {
   registerController,
   loginController,
+  refreshController,
+  logoutController,
   forgotPasswordController,
   resetPasswordController
 };
