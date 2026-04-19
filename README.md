@@ -13,7 +13,7 @@
 - [X] /me endpoint
 - [X] Query system (pagination, filter, search)
 - [X] Error System (custom errors)
+- [X] Auth improvements (password reset, password + refresh token)
 
-### Next (refresh tokens)
-- [ ] Auth improvements (password reset, password + refresh token)
+### Next
 - [ ] Testing

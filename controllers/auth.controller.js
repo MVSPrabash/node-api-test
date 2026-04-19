@@ -1,10 +1,10 @@
 const {
-    registerUser,
-    loginUser,
-    forgotPassword,
-    logoutUser,
-    resetPassword,
-    refreshAccessToken,
+  registerUser,
+  loginUser,
+  forgotPassword,
+  logoutUser,
+  resetPassword,
+  refreshAccessToken,
 } = require('../services/auth.service.js');
 const { ApiError } = require('../utils/ApiError.js');
 const { asyncHandler } = require('../utils/asyncHandler.js');
@@ -26,6 +26,13 @@ const loginController = asyncHandler(async (req, res) => {
     throw new UnauthorizedError("Invalid credentials");
   }
 
+  res.cookie("refreshToken", result.refreshToken, {
+    httpOnly: true,
+    secure: false,                   // NOTE: true in production
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000  // 7 days
+  });
+
   res.status(200).json({
     success: true,
     accessToken: result.accessToken,
@@ -34,7 +41,7 @@ const loginController = asyncHandler(async (req, res) => {
 });
 
 const refreshController = asyncHandler(async (req, res) => {
-  const { refreshToken } = req.body;
+  const { refreshToken } = req.cookies.refreshToken;
 
   const accessToken = await refreshAccessToken(refreshToken);
 
@@ -50,6 +57,8 @@ const refreshController = asyncHandler(async (req, res) => {
 
 const logoutController = asyncHandler(async (req, res) => {
   await logoutUser(req.user.id);
+
+  res.clearCookie("refreshToken");
 
   res.status(200).json({
     success: true,
